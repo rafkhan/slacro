@@ -5,6 +5,7 @@ import (
   "fmt"
   "net/url"
   "net/http"
+  "io/ioutil"
 );
 
 func main() {
@@ -22,6 +23,14 @@ func main() {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
+  body, err := ioutil.ReadAll(r.Body);
+
+  if err != nil {
+    return;
+  }
+
+  fmt.Println(string(body));
+  fmt.Println(r.Header);
   w.Write([]byte("{\"text\":\"ayyy\"}"));
 }
 
