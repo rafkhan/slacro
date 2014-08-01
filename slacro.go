@@ -32,17 +32,18 @@ func getBody(r *http.Request) string {
   return string(body);
 }
 
+func isSlackbot(v url.Values) bool {
+  return v["user_id"][0] == "USLACKBOT";
+}
+
 func handler(w http.ResponseWriter, r *http.Request) {
   body := getBody(r);
   vals, err := url.ParseQuery(body);
 
-  if err != nil {
+  if err != nil || isSlackbot(vals) {
     return;
   }
 
-  if vals["user_id"][0] != "USLACKBOT" {
-    w.Write([]byte("{\"text\":\"ayyy\"}"));
-  }
 }
 
 func makeSlackReq(v url.Values) (*http.Response, error) {
