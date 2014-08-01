@@ -22,16 +22,27 @@ func main() {
   http.ListenAndServe(":7777", nil);
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
+func getBody(r *http.Request) string {
   body, err := ioutil.ReadAll(r.Body);
+
+  if err != nil {
+    return "";
+  }
+
+  return string(body);
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+  body := getBody(r);
+  vals, err := url.ParseQuery(body);
 
   if err != nil {
     return;
   }
 
-  fmt.Println(string(body));
-  fmt.Println(r.Header);
-  w.Write([]byte("{\"text\":\"ayyy\"}"));
+  if vals["user_id"][0] != "USLACKBOT" {
+    w.Write([]byte("{\"text\":\"ayyy\"}"));
+  }
 }
 
 func makeSlackReq(v url.Values) (*http.Response, error) {
