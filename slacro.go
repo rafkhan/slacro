@@ -22,7 +22,7 @@ func main() {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-  w.Write([]byte("hello!"))
+  w.Write([]byte("{\"text\":\"ayyy\"}"));
 }
 
 func makeSlackReq(v url.Values) (*http.Response, error) {
