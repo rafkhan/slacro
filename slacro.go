@@ -1,6 +1,7 @@
 package main;
 
 import (
+  "fmt"
   "net/url"
   "net/http"
   "io/ioutil"
@@ -65,5 +66,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
     return;
   }
 
-  w.Write([]byte(val.(string)));
+  x := val.([]uint8);
+
+  var buf []byte;
+  buf = make([]byte, len(x));
+
+  for i := range x {
+    buf[i] = x[i];
+  }
+
+  w.Write(buf);
 }
