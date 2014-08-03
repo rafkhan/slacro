@@ -10,7 +10,7 @@ import (
 );
 
 const HASH = "hashmap";
-const HOST = "104.131.214.140";
+const HOST = "http://104.131.214.140";
 const PORT = ":7777";
 const NAME = "slacro";
 var ICON string;
