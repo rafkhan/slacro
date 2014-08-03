@@ -27,3 +27,13 @@ func TestSlackbotCheck(t *testing.T) {
     t.Error("User is not a slackbot.");
   }
 }
+
+func TestTriggerText(t *testing.T) {
+  a := "~lol";
+  b := "lol~";
+  c := "l~ol";
+
+  if !HasTrigger(a) { t.Errorf("%s should trigger.", a); }
+  if HasTrigger(b) { t.Errorf("%s should not trigger.", b); }
+  if HasTrigger(c) { t.Errorf("%s should not trigger.", c); }
+}

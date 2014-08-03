@@ -36,12 +36,21 @@ func IsSlackbot(v url.Values) bool {
   return v["user_id"][0] == "USLACKBOT";
 }
 
+func HasTrigger(text string) bool {
+  return text[0] == '~';
+}
+
 func handler(w http.ResponseWriter, r *http.Request) {
   body := getBody(r);
   vals, err := url.ParseQuery(body);
 
   if err != nil || IsSlackbot(vals) {
     return;
+  }
+
+  text := vals["text"][0];
+  if HasTrigger(text) {
+    fmt.Println("OOOOH");
   }
 
   fmt.Println(vals);
