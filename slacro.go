@@ -1,6 +1,7 @@
 package main;
 
 import (
+  "fmt"
   "net/url"
   "net/http"
   "io/ioutil"
@@ -9,18 +10,24 @@ import (
 );
 
 const HASH = "hashmap";
+const HOST = "104.131.214.140";
+const PORT = ":7777";
+const NAME = "slacro";
+var ICON string;
 var conn redis.Conn;
 
 func main() {
   conn = GetRedisConn();
   conn.Do("HSET", HASH, "lie", "lie.png");
 
+  ICON = fmt.Sprintf("%s%s/public/%s", HOST, PORT, "lie.png");
+
   http.HandleFunc("/message", handler);
   http.HandleFunc("/public/", func(w http.ResponseWriter, r *http.Request) {
       http.ServeFile(w, r, r.URL.Path[1:]);
   });
 
-  http.ListenAndServe(":7777", nil);
+  http.ListenAndServe(PORT, nil);
 }
 
 func GetRedisConn() redis.Conn {
@@ -69,6 +76,11 @@ func GetImage(conn redis.Conn, key string) string {
   return string(buf);
 }
 
+func GenerateResp(img string, name string, icon string) string {
+  imgUri := fmt.Sprintf("%s%s/public/%s", HOST, PORT, img);
+  resp := fmt.Sprintf("{\"text\":\"%s\",\"username\":\"%s\",\"icon_url\":\"%s\"}", imgUri, NAME, ICON);
+  return resp;
+}
 
 func handler(w http.ResponseWriter, r *http.Request) {
   body := getBody(r);
@@ -84,6 +96,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
   }
 
   img := GetImage(conn, text[1:]);
+  resp := GenerateResp(img, NAME, ICON);
 
-  w.Write([]byte("{\"text\":\"http://104.131.214.140:7777/public/" + img + "\"}"));
+  w.Write([]byte(resp));
 }

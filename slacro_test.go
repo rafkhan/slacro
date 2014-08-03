@@ -1,6 +1,7 @@
 package main;
 
 import (
+  "fmt"
   "net/url"
   "testing"
 )
@@ -53,4 +54,10 @@ func TestGetImage(t *testing.T) {
     t.Errorf("HGET %s %s should return %s but returned %s instead.",
         HASH, key, val, resp);
   };
+}
+
+// I should actually write a test for this...
+func TestGenerateResp(t *testing.T) {
+  ICON = fmt.Sprintf("%s%s/public/%s", HOST, PORT, "lie.png");
+  fmt.Println(GenerateResp("lie.png", NAME, ICON));
 }
