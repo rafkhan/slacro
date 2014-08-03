@@ -15,7 +15,7 @@ func main() {
   conn = GetRedisConn();
   conn.Do("HSET", HASH, "lie", "lie.png");
 
-  http.HandleFunc("/inbound", handler);
+  http.HandleFunc("/message", handler);
   http.HandleFunc("/public/", func(w http.ResponseWriter, r *http.Request) {
       http.ServeFile(w, r, r.URL.Path[1:]);
   });
