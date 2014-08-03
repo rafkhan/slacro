@@ -1,7 +1,6 @@
 package main;
 
 import (
-  "fmt"
   "net/url"
   "net/http"
   "io/ioutil"
@@ -9,11 +8,12 @@ import (
   redis "github.com/garyburd/redigo/redis"
 );
 
+const HASH = "hashmap";
 var conn redis.Conn;
 
 func main() {
   conn = GetRedisConn();
-  conn.Do("HSET", "test", "a", "1");
+  conn.Do("HSET", HASH, "asd", "HELLOHELLO");
 
   http.HandleFunc("/", handler);
   http.ListenAndServe(":7777", nil);
@@ -46,6 +46,7 @@ func HasTrigger(text string) bool {
   return text[0] == '~';
 }
 
+
 func handler(w http.ResponseWriter, r *http.Request) {
   body := getBody(r);
   vals, err := url.ParseQuery(body);
@@ -55,10 +56,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
   }
 
   text := vals["text"][0];
-  if HasTrigger(text) {
-    fmt.Println("OOOOH");
+  if !HasTrigger(text) {
+    return;
   }
 
-  fmt.Println(vals);
-  //w.Write([]byte("asd"));
+  val, err := conn.Do("HGET", HASH, text[1:]);
+  if err != nil {
+    return;
+  }
+
+  w.Write([]byte(val.(string)));
 }
