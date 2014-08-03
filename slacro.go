@@ -44,6 +44,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
     return;
   }
 
+  fmt.Println(vals);
+  //w.Write([]byte("asd"));
 }
 
 func makeSlackReq(v url.Values) (*http.Response, error) {
