@@ -72,12 +72,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
   buf = make([]byte, len(x));
 
   for i := range x {
-    buf[i] = x[i];
+    buf[i] = byte(x[i]);
   }
 
   fmt.Println(val);
-  fmt.Println(buf);
+  fmt.Println(string(buf));
   fmt.Println("x");
 
-  w.Write(buf);
+  w.Write([]byte("{\"text\":\"" + string(buf) + "\"}"));
 }
