@@ -85,5 +85,5 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
   img := GetImage(conn, text[1:]);
 
-  w.Write([]byte("{\"text\":\"http://104.131.214.140/public/" + img + "\"}"));
+  w.Write([]byte("{\"text\":\"http://104.131.214.140:7777/public/" + img + "\"}"));
 }
