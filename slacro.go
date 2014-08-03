@@ -1,25 +1,31 @@
 package main;
 
 import (
-  "os"
   "fmt"
   "net/url"
   "net/http"
   "io/ioutil"
+
+  redis "github.com/garyburd/redigo/redis"
 );
 
-func main() {
-  token := os.Getenv("SLACK_TOKEN");
-  fmt.Println(token);
+var conn redis.Conn;
 
-  /*
-  makeSlackReq(url.Values{"token": {token},
-                          "channel": {"#bot-test"},
-                          "text": {"ayy"}});
-  */
+func main() {
+  conn = GetRedisConn();
+  conn.Do("HSET", "test", "a", "1");
 
   http.HandleFunc("/", handler);
   http.ListenAndServe(":7777", nil);
+}
+
+func GetRedisConn() redis.Conn {
+  c, err := redis.Dial("tcp", "localhost:6379");
+  if err != nil {
+      panic(err);
+  }
+
+  return c;
 }
 
 func getBody(r *http.Request) string {
@@ -55,10 +61,4 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
   fmt.Println(vals);
   //w.Write([]byte("asd"));
-}
-
-func makeSlackReq(v url.Values) (*http.Response, error) {
-  url := "https://slack.com/api/chat.postMessage?" + v.Encode();
-  resp, err := http.Get(url);
-  return resp, err;
 }
