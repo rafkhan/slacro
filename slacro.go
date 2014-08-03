@@ -75,5 +75,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
     buf[i] = x[i];
   }
 
+  fmt.Println(val);
+  fmt.Println(buf);
+  fmt.Println("x");
+
   w.Write(buf);
 }
