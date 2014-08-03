@@ -1,7 +1,6 @@
 package main;
 
 import (
-  "fmt"
   "net/url"
   "net/http"
   "io/ioutil"
@@ -14,9 +13,13 @@ var conn redis.Conn;
 
 func main() {
   conn = GetRedisConn();
-  conn.Do("HSET", HASH, "asd", "HELLOHELLO");
+  conn.Do("HSET", HASH, "lie", "lie.png");
 
-  http.HandleFunc("/", handler);
+  http.HandleFunc("/inbound", handler);
+  http.HandleFunc("/public/", func(w http.ResponseWriter, r *http.Request) {
+      http.ServeFile(w, r, r.URL.Path[1:]);
+  });
+
   http.ListenAndServe(":7777", nil);
 }
 
@@ -47,6 +50,25 @@ func HasTrigger(text string) bool {
   return text[0] == '~';
 }
 
+func GetImage(conn redis.Conn, key string) string {
+  val, err := conn.Do("HGET", HASH, key);
+  if err != nil {
+    return "";
+  }
+
+  // Find a better way to do this
+  x := val.([]uint8);
+
+  var buf []byte;
+  buf = make([]byte, len(x));
+
+  for i := range x {
+    buf[i] = byte(x[i]);
+  }
+
+  return string(buf);
+}
+
 
 func handler(w http.ResponseWriter, r *http.Request) {
   body := getBody(r);
@@ -61,23 +83,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
     return;
   }
 
-  val, err := conn.Do("HGET", HASH, text[1:]);
-  if err != nil {
-    return;
-  }
+  img := GetImage(conn, text[1:]);
 
-  x := val.([]uint8);
-
-  var buf []byte;
-  buf = make([]byte, len(x));
-
-  for i := range x {
-    buf[i] = byte(x[i]);
-  }
-
-  fmt.Println(val);
-  fmt.Println(string(buf));
-  fmt.Println("x");
-
-  w.Write([]byte("{\"text\":\"" + string(buf) + "\"}"));
+  w.Write([]byte("{\"text\":\"/public/" + img + "\"}"));
 }

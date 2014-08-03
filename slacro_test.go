@@ -38,3 +38,19 @@ func TestRedisConn(t *testing.T) {
     t.Error("No redis connection.")
   }
 }
+
+func TestGetImage(t *testing.T) {
+  key := "lie";
+  val := "lie.png";
+
+  conn := GetRedisConn();
+  defer conn.Close();
+
+  conn.Do("HSET", HASH, key, val);
+
+  resp := GetImage(conn, key);
+  if resp != val {
+    t.Errorf("HGET %s %s should return %s but returned %s instead.",
+        HASH, key, val, resp);
+  };
+}
